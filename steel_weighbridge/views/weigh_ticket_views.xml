@@ -49,25 +49,25 @@
                         <h1><field name="name" readonly="1"/></h1>
                     </div>
                     <group>
-                        <group string="Ticket">
+                        <group name="ticket_info" string="Ticket">
                             <field name="ticket_type" widget="radio" options="{'horizontal': true}" readonly="state != 'draft'"/>
                             <field name="partner_id" readonly="state != 'draft'"/>
                             <field name="truck_plate" readonly="state != 'draft'"/>
                             <field name="date" readonly="state != 'draft'"/>
                             <field name="company_id" groups="base.group_multi_company" readonly="state != 'draft'"/>
                         </group>
-                        <group string="Weighing">
+                        <group name="weighing" string="Weighing">
                             <field name="gross_kg" readonly="state != 'draft'"/>
                             <field name="tare_kg" readonly="state != 'draft'"/>
                             <field name="net_kg"/>
                             <field name="net_ton" readonly="state != 'draft'"/>
                         </group>
-                        <group string="Pricing">
+                        <group name="pricing" string="Pricing">
                             <field name="currency_id" groups="base.group_multi_currency" readonly="state != 'draft'"/>
                             <field name="price_per_ton" readonly="state not in ('draft', 'weighed')"/>
                             <field name="amount"/>
                         </group>
-                        <group string="Reversal" invisible="not is_reversal and not reversal_ids">
+                        <group name="reversal" string="Reversal" invisible="not is_reversal and not reversal_ids">
                             <field name="is_reversal" invisible="1"/>
                             <field name="reversed_ticket_id" invisible="not is_reversal"/>
                             <field name="reversal_ids" widget="many2many_tags" invisible="not reversal_ids"/>
