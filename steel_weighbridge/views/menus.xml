@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <menuitem id="menu_weighbridge_root" name="Weighbridge"
+              web_icon="steel_weighbridge,static/description/icon.png"
+              groups="group_weighbridge_sales,group_weighbridge_purchase" sequence="45"/>
+
+    <menuitem id="menu_weighbridge_tickets" name="Tickets" parent="menu_weighbridge_root"
+              action="action_steel_weigh_ticket" sequence="10"/>
+
+    <menuitem id="menu_weighbridge_reporting" name="Reporting" parent="menu_weighbridge_root" sequence="20"/>
+    <menuitem id="menu_weighbridge_analysis" name="Analysis" parent="menu_weighbridge_reporting"
+              action="action_steel_weigh_ticket_analysis" sequence="10"/>
+    <menuitem id="menu_weighbridge_daily_summary" name="Daily Summaries" parent="menu_weighbridge_reporting"
+              action="action_steel_daily_summary" sequence="20"/>
+</odoo>

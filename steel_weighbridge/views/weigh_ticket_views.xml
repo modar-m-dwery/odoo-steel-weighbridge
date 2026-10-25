@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="steel_weigh_ticket_view_list" model="ir.ui.view">
+        <field name="name">steel.weigh.ticket.list</field>
+        <field name="model">steel.weigh.ticket</field>
+        <field name="arch" type="xml">
+            <list string="Weighbridge Tickets" decoration-muted="state == 'reversed'"
+                  decoration-danger="is_reversal" sample="1">
+                <field name="name" decoration-bf="1"/>
+                <field name="date"/>
+                <field name="partner_id"/>
+                <field name="ticket_type" widget="badge"
+                       decoration-info="ticket_type == 'purchase'" decoration-success="ticket_type == 'sale'"/>
+                <field name="truck_plate"/>
+                <field name="net_ton"/>
+                <field name="price_per_ton" optional="hide"/>
+                <field name="amount"/>
+                <field name="currency_id" column_invisible="True"/>
+                <field name="company_id" groups="base.group_multi_company" optional="show"/>
+                <field name="is_reversal" column_invisible="True"/>
+                <field name="state" widget="badge"
+                       decoration-warning="state == 'weighed'" decoration-success="state == 'done'"
+                       decoration-muted="state == 'reversed'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="steel_weigh_ticket_view_form" model="ir.ui.view">
+        <field name="name">steel.weigh.ticket.form</field>
+        <field name="model">steel.weigh.ticket</field>
+        <field name="arch" type="xml">
+            <form string="Weighbridge Ticket">
+                <header>
+                    <button name="action_weigh" string="Confirm Weighing" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_done" string="Complete" type="object"
+                            class="btn-primary" invisible="state != 'weighed'"/>
+                    <button name="action_reset_to_draft" string="Reset to Draft" type="object"
+                            invisible="state != 'weighed'"/>
+                    <button name="action_reverse" string="Reverse" type="object"
+                            invisible="state != 'done' or is_reversal"
+                            confirm="This creates an opposite ticket and keeps the original. Continue?"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,weighed,done"/>
+                </header>
+                <sheet>
+                    <widget name="web_ribbon" title="Reversal" bg_color="text-bg-danger" invisible="not is_reversal"/>
+                    <widget name="web_ribbon" title="Reversed" bg_color="text-bg-secondary" invisible="state != 'reversed'"/>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group string="Ticket">
+                            <field name="ticket_type" widget="radio" options="{'horizontal': true}" readonly="state != 'draft'"/>
+                            <field name="partner_id" readonly="state != 'draft'"/>
+                            <field name="truck_plate" readonly="state != 'draft'"/>
+                            <field name="date" readonly="state != 'draft'"/>
+                            <field name="company_id" groups="base.group_multi_company" readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Weighing">
+                            <field name="gross_kg" readonly="state != 'draft'"/>
+                            <field name="tare_kg" readonly="state != 'draft'"/>
+                            <field name="net_kg"/>
+                            <field name="net_ton" readonly="state != 'draft'"/>
+                        </group>
+                        <group string="Pricing">
+                            <field name="currency_id" groups="base.group_multi_currency" readonly="state != 'draft'"/>
+                            <field name="price_per_ton" readonly="state not in ('draft', 'weighed')"/>
+                            <field name="amount"/>
+                        </group>
+                        <group string="Reversal" invisible="not is_reversal and not reversal_ids">
+                            <field name="is_reversal" invisible="1"/>
+                            <field name="reversed_ticket_id" invisible="not is_reversal"/>
+                            <field name="reversal_ids" widget="many2many_tags" invisible="not reversal_ids"/>
+                        </group>
+                    </group>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="steel_weigh_ticket_view_search" model="ir.ui.view">
+        <field name="name">steel.weigh.ticket.search</field>
+        <field name="model">steel.weigh.ticket</field>
+        <field name="arch" type="xml">
+            <search string="Search Tickets">
+                <field name="name"/>
+                <field name="partner_id" operator="child_of"/>
+                <field name="truck_plate"/>
+                <filter name="purchases" string="Purchases" domain="[('ticket_type', '=', 'purchase')]"/>
+                <filter name="sales" string="Sales" domain="[('ticket_type', '=', 'sale')]"/>
+                <separator/>
+                <filter name="draft" string="Draft" domain="[('state', '=', 'draft')]"/>
+                <filter name="weighed" string="Open Weighings" domain="[('state', '=', 'weighed')]"/>
+                <filter name="done" string="Completed" domain="[('state', '=', 'done')]"/>
+                <filter name="reversals" string="Reversals" domain="[('is_reversal', '=', True)]"/>
+                <separator/>
+                <filter name="filter_date" string="Date" date="date"/>
+                <group>
+                    <filter name="group_partner" string="Partner" context="{'group_by': 'partner_id'}"/>
+                    <filter name="group_type" string="Type" context="{'group_by': 'ticket_type'}"/>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_month" string="Month" context="{'group_by': 'date:month'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="steel_weigh_ticket_view_pivot" model="ir.ui.view">
+        <field name="name">steel.weigh.ticket.pivot</field>
+        <field name="model">steel.weigh.ticket</field>
+        <field name="arch" type="xml">
+            <!-- One column per currency; the grand total is converted to the company currency and flagged by Odoo. -->
+            <pivot string="Weighbridge Analysis" sample="1">
+                <field name="date" interval="month" type="row"/>
+                <field name="currency_id" type="col"/>
+                <field name="amount" type="measure"/>
+                <field name="net_ton" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <record id="steel_weigh_ticket_view_graph" model="ir.ui.view">
+        <field name="name">steel.weigh.ticket.graph</field>
+        <field name="model">steel.weigh.ticket</field>
+        <field name="arch" type="xml">
+            <graph string="Tonnage" type="bar" stacked="1" sample="1">
+                <field name="date" interval="month"/>
+                <field name="ticket_type"/>
+                <field name="net_ton" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <record id="action_steel_weigh_ticket" model="ir.actions.act_window">
+        <field name="name">Weighbridge Tickets</field>
+        <field name="res_model">steel.weigh.ticket</field>
+        <field name="view_mode">list,form,pivot,graph</field>
+        <field name="search_view_id" ref="steel_weigh_ticket_view_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Create your first weighbridge ticket</p>
+            <p>Weigh the truck loaded and empty; the net weight, tonnage and amount follow.</p>
+        </field>
+    </record>
+
+    <record id="action_steel_weigh_ticket_analysis" model="ir.actions.act_window">
+        <field name="name">Weighbridge Analysis</field>
+        <field name="res_model">steel.weigh.ticket</field>
+        <field name="view_mode">pivot,graph,list</field>
+        <field name="search_view_id" ref="steel_weigh_ticket_view_search"/>
+        <!-- Effective tickets only: a reversed ticket and its reversal drop out together. -->
+        <field name="domain">[('state', '=', 'done'), ('is_reversal', '=', False)]</field>
+    </record>
+</odoo>

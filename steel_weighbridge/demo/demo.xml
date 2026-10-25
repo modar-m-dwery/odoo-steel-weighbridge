@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Demo tickets are priced in USD and EUR. -->
+    <record id="base.EUR" model="res.currency">
+        <field name="active" eval="True"/>
+    </record>
+
+    <record id="demo_partner_scrap" model="res.partner">
+        <field name="name">Al Noor Scrap Metals</field>
+        <field name="is_company" eval="True"/>
+    </record>
+    <record id="demo_partner_rebar" model="res.partner">
+        <field name="name">Gulf Rebar Trading</field>
+        <field name="is_company" eval="True"/>
+    </record>
+    <record id="demo_partner_build" model="res.partner">
+        <field name="name">Delta Construction</field>
+        <field name="is_company" eval="True"/>
+    </record>
+
+    <record id="demo_ticket_1" model="steel.weigh.ticket">
+        <field name="ticket_type">purchase</field>
+        <field name="partner_id" ref="demo_partner_scrap"/>
+        <field name="truck_plate">BGD-41207</field>
+        <field name="date" eval="(DateTime.today() - relativedelta(months=1)).strftime('%Y-%m-%d')"/>
+        <field name="gross_kg">38450</field>
+        <field name="tare_kg">14200</field>
+        <field name="currency_id" ref="base.USD"/>
+        <field name="price_per_ton">315</field>
+        <field name="state">done</field>
+    </record>
+    <record id="demo_ticket_2" model="steel.weigh.ticket">
+        <field name="ticket_type">sale</field>
+        <field name="partner_id" ref="demo_partner_build"/>
+        <field name="truck_plate">BSR-77310</field>
+        <field name="date" eval="(DateTime.today() - relativedelta(months=1)).strftime('%Y-%m-%d')"/>
+        <field name="gross_kg">31200</field>
+        <field name="tare_kg">12900</field>
+        <field name="currency_id" ref="base.USD"/>
+        <field name="price_per_ton">640</field>
+        <field name="state">done</field>
+    </record>
+    <record id="demo_ticket_3" model="steel.weigh.ticket">
+        <field name="ticket_type">sale</field>
+        <field name="partner_id" ref="demo_partner_rebar"/>
+        <field name="truck_plate">ERB-20519</field>
+        <field name="date" eval="DateTime.today().strftime('%Y-%m-%d')"/>
+        <field name="gross_kg">29800</field>
+        <field name="tare_kg">13150</field>
+        <field name="currency_id" ref="base.EUR"/>
+        <field name="price_per_ton">590</field>
+        <field name="state">done</field>
+    </record>
+    <record id="demo_ticket_4" model="steel.weigh.ticket">
+        <field name="ticket_type">purchase</field>
+        <field name="partner_id" ref="demo_partner_scrap"/>
+        <field name="truck_plate">BGD-41207</field>
+        <field name="date" eval="DateTime.today().strftime('%Y-%m-%d')"/>
+        <field name="gross_kg">36900</field>
+        <field name="tare_kg">14200</field>
+        <field name="currency_id" ref="base.USD"/>
+        <field name="price_per_ton">320</field>
+        <field name="state">weighed</field>
+    </record>
+    <record id="demo_ticket_5" model="steel.weigh.ticket">
+        <field name="ticket_type">purchase</field>
+        <field name="partner_id" ref="demo_partner_scrap"/>
+        <field name="truck_plate">NJF-10844</field>
+        <field name="date" eval="DateTime.today().strftime('%Y-%m-%d')"/>
+        <field name="tare_kg">13600</field>
+        <field name="currency_id" ref="base.USD"/>
+        <field name="price_per_ton">320</field>
+    </record>
+</odoo>

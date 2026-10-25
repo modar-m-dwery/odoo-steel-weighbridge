@@ -1,0 +1,7 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ticket_sales,steel.weigh.ticket.sales,model_steel_weigh_ticket,group_weighbridge_sales,1,1,1,0
+access_ticket_purchase,steel.weigh.ticket.purchase,model_steel_weigh_ticket,group_weighbridge_purchase,1,1,1,0
+access_ticket_manager,steel.weigh.ticket.manager,model_steel_weigh_ticket,group_weighbridge_manager,1,1,1,1
+access_summary_sales,steel.daily.summary.sales,model_steel_daily_summary,group_weighbridge_sales,1,0,0,0
+access_summary_purchase,steel.daily.summary.purchase,model_steel_daily_summary,group_weighbridge_purchase,1,0,0,0
+access_summary_manager,steel.daily.summary.manager,model_steel_daily_summary,group_weighbridge_manager,1,0,0,1

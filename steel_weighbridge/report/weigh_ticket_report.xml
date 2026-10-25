@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_report_weigh_ticket" model="ir.actions.report">
+        <field name="name">Weighbridge Ticket</field>
+        <field name="model">steel.weigh.ticket</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">steel_weighbridge.report_weigh_ticket</field>
+        <field name="report_file">steel_weighbridge.report_weigh_ticket</field>
+        <field name="print_report_name">'Weighbridge Ticket - %s' % object.name</field>
+        <field name="binding_model_id" ref="model_steel_weigh_ticket"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_weigh_ticket_document">
+        <t t-call="web.external_layout">
+            <div class="page">
+                <h2>
+                    <t t-if="o.is_reversal">Reversal Ticket</t>
+                    <t t-else="">Weighbridge Ticket</t>
+                    <span t-field="o.name">WT/2026/00001</span>
+                </h2>
+                <p t-if="o.is_reversal" class="text-danger">
+                    Reverses ticket <span t-field="o.reversed_ticket_id.name">WT/2026/00000</span>
+                </p>
+
+                <div class="row mt-4 mb-4">
+                    <div class="col-6">
+                        <strong>Partner</strong>
+                        <div t-field="o.partner_id"
+                             t-options="{'widget': 'contact', 'fields': ['name', 'address'], 'no_marker': True}"/>
+                    </div>
+                    <div class="col-6">
+                        <table class="table table-sm table-borderless">
+                            <tr><td><strong>Type</strong></td><td><span t-field="o.ticket_type">Purchase</span></td></tr>
+                            <tr><td><strong>Date</strong></td><td><span t-field="o.date">2026-01-01</span></td></tr>
+                            <tr><td><strong>Truck</strong></td><td><span t-field="o.truck_plate">ABC-123</span></td></tr>
+                            <tr><td><strong>Status</strong></td><td><span t-field="o.state">Done</span></td></tr>
+                        </table>
+                    </div>
+                </div>
+
+                <table class="table table-sm o_main_table">
+                    <thead>
+                        <tr>
+                            <th>Gross (kg)</th>
+                            <th>Tare (kg)</th>
+                            <th class="text-end">Net (kg)</th>
+                            <th class="text-end">Net (t)</th>
+                            <th class="text-end">Price / t</th>
+                            <th class="text-end">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span t-field="o.gross_kg">20,000.0</span></td>
+                            <td><span t-field="o.tare_kg">8,000.0</span></td>
+                            <td class="text-end"><span t-field="o.net_kg">12,000.0</span></td>
+                            <td class="text-end"><span t-field="o.net_ton">12.000</span></td>
+                            <td class="text-end"><span t-field="o.price_per_ton">$ 100.00</span></td>
+                            <td class="text-end"><strong t-field="o.amount">$ 1,200.00</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="row mt-5">
+                    <div class="col-6 text-center">
+                        <div style="border-top: 1px solid #333; margin: 48px 24px 0;">Weighbridge operator</div>
+                    </div>
+                    <div class="col-6 text-center">
+                        <div style="border-top: 1px solid #333; margin: 48px 24px 0;">Driver</div>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="report_weigh_ticket">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="steel_weighbridge.report_weigh_ticket_document"/>
+            </t>
+        </t>
+    </template>
+</odoo>

@@ -1,0 +1,46 @@
+name: tests
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  odoo-19:
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: odoo
+          POSTGRES_PASSWORD: odoo  # throwaway CI database
+          POSTGRES_DB: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 10s
+          --health-timeout 5s --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: repo
+      - uses: actions/checkout@v4
+        with:
+          repository: odoo/odoo
+          ref: "19.0"
+          path: odoo
+          depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: odoo/requirements.txt
+      - name: System libraries for python-ldap and psycopg2
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends libldap2-dev libsasl2-dev libpq-dev
+      - name: Odoo requirements
+        run: pip install -r odoo/requirements.txt
+      - name: Install module and run tests
+        run: |
+          python odoo/odoo-bin -d ci -i steel_weighbridge \
+            --addons-path=odoo/addons,repo \
+            --db_host=localhost --db_port=5432 --db_user=odoo --db_password=odoo \
+            --test-enable --test-tags /steel_weighbridge \
+            --stop-after-init --log-level=test
