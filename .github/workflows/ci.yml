@@ -19,16 +19,16 @@ jobs:
           --health-cmd pg_isready --health-interval 10s
           --health-timeout 5s --health-retries 5
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           path: repo
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           repository: odoo/odoo
           ref: "19.0"
           path: odoo
-          depth: 1
-      - uses: actions/setup-python@v5
+          fetch-depth: 1
+      - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
